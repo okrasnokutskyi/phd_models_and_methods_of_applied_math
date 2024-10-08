@@ -1,0 +1,10 @@
+{
+  "name": "runge_kutta_amensalism",
+  "version": "1.0.0",
+  "description": "Двовимірні ДС Знайти стани рівноваги ДС та встановити їх тип. Аменсалізм",
+  "main": "rungeKuttaAmensalism.js",
+  "scripts": {
+    "start": "node rungeKuttaAmensalism.js"
+  },
+  "author": "Oleksandr Krasnokutskyi"
+}

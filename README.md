@@ -1,1 +1,3 @@
-# phd_models_and_methods_of_applied_math
+# Моделі і методи прикладної математики
+
+## [Тема 2 Двовимірні ДС](team2/)
