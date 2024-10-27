@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модель Лоренца - Траєкторії та проекції</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div id="plot"></div>
+
+    <script>
+        // Параметри моделі Лоренца
+        const sigma = 10;
+        const r = 28; // Параметр r
+        const b = 8 / 3;
+
+        // Початкові умови
+        let x = 1.0;
+        let y = 1.0;
+        let z = 1.0;
+
+        // Параметри інтегрування
+        const h = 0.01; // Крок
+        const steps = 10000; // Кількість кроків
+
+        // Модель Лоренца
+        function lorenz(x, y, z, r) {
+            const dx = sigma * (y - x);
+            const dy = x * (r - z) - y;
+            const dz = x * y - b * z;
+            return [dx, dy, dz];
+        }
+
+        // Метод Рунге-Кутти 4-го порядку
+        function rungeKutta4(x, y, z, r, h, steps) {
+            let result = { x: [], y: [], z: [] };
+
+            for (let i = 0; i < steps; i++) {
+                // Зберігаємо результати
+                result.x.push(x);
+                result.y.push(y);
+                result.z.push(z);
+
+                // Обчислюємо k1
+                let [k1_x, k1_y, k1_z] = lorenz(x, y, z, r);
+
+                // Обчислюємо k2
+                let [k2_x, k2_y, k2_z] = lorenz(x + 0.5 * h * k1_x, y + 0.5 * h * k1_y, z + 0.5 * h * k1_z, r);
+
+                // Обчислюємо k3
+                let [k3_x, k3_y, k3_z] = lorenz(x + 0.5 * h * k2_x, y + 0.5 * h * k2_y, z + 0.5 * h * k2_z, r);
+
+                // Обчислюємо k4
+                let [k4_x, k4_y, k4_z] = lorenz(x + h * k3_x, y + h * k3_y, z + h * k3_z, r);
+
+                // Оновлюємо значення змінних
+                x += (h / 6) * (k1_x + 2 * k2_x + 2 * k3_x + k4_x);
+                y += (h / 6) * (k1_y + 2 * k2_y + 2 * k3_y + k4_y);
+                z += (h / 6) * (k1_z + 2 * k2_z + 2 * k3_z + k4_z);
+            }
+
+            return result;
+        }
+
+        // Числове розв'язання з початковими умовами
+        const result = rungeKutta4(x, y, z, r, h, steps);
+
+        // Траєкторія у фазовому просторі (X, Y, Z)
+        const trace3D = {
+            x: result.x,
+            y: result.y,
+            z: result.z,
+            mode: 'lines',
+            type: 'scatter3d',
+            line: { width: 2, color: 'blue' },
+            name: 'Траєкторія у фазовому просторі'
+        };
+
+        // Проекція на площину xOz
+        const traceXZ = {
+            x: result.x,
+            y: result.z,
+            mode: 'lines',
+            type: 'scatter',
+            line: { width: 1, color: 'red' },
+            name: 'Проекція на площину xOz'
+        };
+
+        // Проекція на площину yOz
+        const traceYZ = {
+            x: result.y,
+            y: result.z,
+            mode: 'lines',
+            type: 'scatter',
+            line: { width: 1, color: 'green' },
+            name: 'Проекція на площину yOz'
+        };
+
+        // Побудова графіків
+        const layout3D = {
+            title: 'Траєкторія Лоренца у фазовому просторі',
+            scene: {
+                xaxis: { title: 'X' },
+                yaxis: { title: 'Y' },
+                zaxis: { title: 'Z' }
+            }
+        };
+
+        const layout2D = {
+            title: 'Проекції траєкторій',
+            xaxis: { title: 'X або Y' },
+            yaxis: { title: 'Z' }
+        };
+
+        // Побудова графіків
+        Plotly.newPlot('plot', [trace3D], layout3D); // 3D траєкторія
+        Plotly.newPlot('plot', [traceXZ, traceYZ], layout2D); // 2D проекції
+    </script>
+
+</body>
+</html>

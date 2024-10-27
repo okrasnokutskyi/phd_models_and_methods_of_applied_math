@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модель Лоренца - Числові експерименти</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div id="plot"></div>
+
+    <script>
+        // Параметри моделі Лоренца
+        const sigma = 10;
+        const b = 8 / 3;
+
+        // Початкові умови
+        let x = 1.0;
+        let y = 1.0;
+        let z = 1.0;
+
+        // Параметри інтегрування
+        const h = 0.01; // Крок
+        const steps = 10000; // Кількість кроків
+
+        // Модель Лоренца
+        function lorenz(x, y, z, r) {
+            const dx = sigma * (y - x);
+            const dy = x * (r - z) - y;
+            const dz = x * y - b * z;
+            return [dx, dy, dz];
+        }
+
+        // Метод Рунге-Кутти 4-го порядку
+        function rungeKutta4(x, y, z, r, h, steps) {
+            let result = { x: [], y: [], z: [] };
+
+            for (let i = 0; i < steps; i++) {
+                // Зберігаємо результати
+                result.x.push(x);
+                result.y.push(y);
+                result.z.push(z);
+
+                // Обчислюємо k1
+                let [k1_x, k1_y, k1_z] = lorenz(x, y, z, r);
+
+                // Обчислюємо k2
+                let [k2_x, k2_y, k2_z] = lorenz(x + 0.5 * h * k1_x, y + 0.5 * h * k1_y, z + 0.5 * h * k1_z, r);
+
+                // Обчислюємо k3
+                let [k3_x, k3_y, k3_z] = lorenz(x + 0.5 * h * k2_x, y + 0.5 * h * k2_y, z + 0.5 * h * k2_z, r);
+
+                // Обчислюємо k4
+                let [k4_x, k4_y, k4_z] = lorenz(x + h * k3_x, y + h * k3_y, z + h * k3_z, r);
+
+                // Оновлюємо значення змінних
+                x += (h / 6) * (k1_x + 2 * k2_x + 2 * k3_x + k4_x);
+                y += (h / 6) * (k1_y + 2 * k2_y + 2 * k3_y + k4_y);
+                z += (h / 6) * (k1_z + 2 * k2_z + 2 * k3_z + k4_z);
+            }
+
+            return result;
+        }
+
+        // Числові експерименти для різних інтервалів r
+        const r_values = [
+            { name: 'r ∈ (0, 1)', r: 0.5 },
+            { name: 'r ∈ (1, 13.926)', r: 5000 },
+            { name: 'r ∈ (13.926, 24.06)', r: 14000 },
+            { name: 'r ∈ (100, 400)', r: 200 }
+        ];
+
+        let traces = [];
+        r_values.forEach(exp => {
+            let result = rungeKutta4(x, y, z, exp.r, h, steps);
+            traces.push({
+                x: result.x,
+                y: result.y,
+                z: result.z,
+                mode: 'lines',
+                type: 'scatter3d',
+                name: exp.name
+            });
+        });
+
+        // Побудова графіків
+        const layout = {
+            title: 'Траєкторії Лоренца для різних r',
+            scene: {
+                xaxis: { title: 'X' },
+                yaxis: { title: 'Y' },
+                zaxis: { title: 'Z' }
+            }
+        };
+
+        Plotly.newPlot('plot', traces, layout);
+
+    </script>
+
+</body>
+</html>
