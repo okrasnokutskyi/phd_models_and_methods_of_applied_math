@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Van der Pol Model</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>Van der Pol Oscillator Analysis</h1>
+    <label for="epsilon">Select ε value:</label>
+    <select id="epsilon">
+        <option value="-0.2">ε = -0.2</option>
+        <option value="0.1">ε = 0.1</option>
+        <option value="0.2">ε = 0.2</option>
+        <option value="0.5">ε = 0.5</option>
+        <option value="1.5">ε = 1.5</option>
+        <option value="2.0">ε = 2.0</option>
+    </select>
+    <button onclick="plotGraphs()">Plot Graphs</button>
+
+    <div id="x_t_plot" class="plot-container"></div>
+    <div id="y_t_plot" class="plot-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

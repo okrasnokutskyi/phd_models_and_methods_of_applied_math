@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "start": "node main.js"
+  },
+  "dependencies": {
+    "mathjs": "^13.2.0"
+  }
+}
